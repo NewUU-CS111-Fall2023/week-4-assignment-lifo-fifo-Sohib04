@@ -1,41 +1,42 @@
 #include <iostream>
 #include <stack>
-#include <unordered_map>
 #include <string>
-
 using namespace std;
 
-bool checkExpression(string brackets) {
-    stack<char> st;
-    unordered_map<char, char> closingToOpening = {{')', '('}, {']', '['}, {'}', '{'}};
+int evaluateExpression(string expression) {
+    stack<int> st;
 
-    for (char bracket : brackets) {
-        if (bracket == '(' || bracket == '[' || bracket == '{') {
-            st.push(bracket);
-        } else if (bracket == ')' || bracket == ']' || bracket == '}') {
-            if (st.empty() || st.top() != closingToOpening[bracket]) {
-                return false;
-            } else {
-                st.pop();
+    for (char ch : expression) {
+        if (ch >= '0' && ch <= '9') {
+            st.push(ch - '0');
+        } else {
+            int operand2 = st.top();
+            st.pop();
+            int operand1 = st.top();
+            st.pop();
+            
+            switch(ch) {
+                case '+':
+                    st.push(operand1 + operand2);
+                    break;
+                case '-':
+                    st.push(operand1 - operand2);
+                    break;
+                case '*':
+                    st.push(operand1 * operand2);
+                    break;
             }
         }
     }
-
-    return st.empty();
+    return st.top();
 }
 
 int main() {
-    int n;
-    string brackets;
-    cin >> n;
-    cin.ignore();
-    getline(cin, brackets);
+    string expression;
+    getline(cin, expression);
 
-    if (checkExpression(brackets)) {
-        cout << "yes" << endl;
-    } else {
-        cout << "no" << endl;
-    }
+    int result = evaluateExpression(expression);
+    cout << result << endl;
 
     return 0;
 }
